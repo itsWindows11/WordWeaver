@@ -31,6 +31,8 @@ namespace WordWeaver
             _timer.Tick += OnTimerTick;
             _timer.Start();
 
+            ViewModel.GetTranslationHistoryCommand?.Execute(null);
+
             Unloaded += OnMainPageUnloaded;
         }
 
@@ -64,7 +66,7 @@ namespace WordWeaver
             {
                 _shouldTrigger = false;
                 ViewModel.SourceCharCount = ViewModel.SourceText.Length;
-                await ViewModel.TranslateCommand?.ExecuteAsync(null);
+                await ViewModel.TranslateCommand?.ExecuteAsync(false);
                 ViewModel.TranslationCharCount = ViewModel.TranslatedText.Length;
             }
         }
@@ -79,7 +81,7 @@ namespace WordWeaver
             var comboBox = (ComboBox)sender;
             ViewModel.SelectedSourceLangInfo = (LanguageInfo)comboBox.SelectedItem;
 
-            await ViewModel.TranslateCommand?.ExecuteAsync(null);
+            await ViewModel.TranslateCommand?.ExecuteAsync(false);
         }
 
         private async void OnTranslationComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -87,7 +89,7 @@ namespace WordWeaver
             var comboBox = (ComboBox)sender;
             ViewModel.SelectedTranslationLangInfo = (LanguageInfo)comboBox.SelectedItem;
 
-            await ViewModel.TranslateCommand?.ExecuteAsync(null);
+            await ViewModel.TranslateCommand?.ExecuteAsync(false);
         }
     }
 }

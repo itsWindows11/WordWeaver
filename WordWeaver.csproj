@@ -124,12 +124,16 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\DbObject.cs" />
     <Compile Include="Models\LanguageInfo.cs" />
     <Compile Include="Models\LibreDetectedLanguageInfo.cs" />
     <Compile Include="Models\LibreTranslationInfo.cs" />
     <Compile Include="Models\LibreTranslationResponse.cs" />
+    <Compile Include="Models\TranslationHistory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Impl\LibreTranslateService.cs" />
+    <Compile Include="Services\Impl\RepositoryService.cs" />
+    <Compile Include="Services\IRepositoryService.cs" />
     <Compile Include="Services\ITranslationService.cs" />
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>

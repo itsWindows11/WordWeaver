@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using WordWeaver.Models;
 using WordWeaver.Services;
@@ -27,14 +29,39 @@ namespace WordWeaver.ViewModels
         [ObservableProperty]
         private LanguageInfo _selectedTranslationLangInfo;
 
+        public ObservableCollection<TranslationHistory> TranslationHistory { get; } = new();
+
         [RelayCommand]
-        private async Task TranslateAsync()
+        public async Task GetTranslationHistoryAsync()
+        {
+            foreach (var item in await Ioc.Default.GetRequiredService<IRepositoryService>().GetSavedTranslationsAsync())
+            {
+                TranslationHistory.Add(item);
+            }
+        }
+
+        [RelayCommand]
+        private async Task TranslateAsync(bool isButton)
         {
             if (string.IsNullOrWhiteSpace(SourceText)) return;
 
             TranslatedText = await Ioc.Default
                 .GetRequiredService<ITranslationService>()
                 .TranslateAsync(SourceText, SelectedSourceLangInfo.LanguageCode, SelectedTranslationLangInfo.LanguageCode);
+
+            if (isButton)
+            {
+                var item = new TranslationHistory()
+                {
+                    SourceText = SourceText,
+                    TranslatedText = TranslatedText,
+                    Date = DateTime.UtcNow
+                };
+
+                TranslationHistory.Add(item);
+
+                await Ioc.Default.GetRequiredService<IRepositoryService>().AddSavedTranslationAsync(item);
+            }
         }
     }
 }

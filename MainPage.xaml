@@ -28,131 +28,153 @@
             </sk:TitleBar.Icon>
         </sk:TitleBar>
 
-        <ScrollViewer
+        <ListView
             Grid.Row="1"
             Padding="16,0"
-            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-            <StackPanel Margin="0,12,0,0" Spacing="16">
-                <Grid
-                    x:Name="TranslationFieldsGrid"
-                    ColumnSpacing="16"
-                    RowSpacing="16">
-                    <Grid.ChildrenTransitions>
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            DisplayMemberPath="TranslatedText"
+            ItemsSource="{x:Bind ViewModel.TranslationHistory}">
+            <ListView.Header>
+                <StackPanel Margin="0,12,0,0" Spacing="16">
+                    <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
-                            <RepositionThemeTransition IsStaggeringEnabled="False" />
                             <EntranceThemeTransition />
                         </TransitionCollection>
-                    </Grid.ChildrenTransitions>
+                    </StackPanel.ChildrenTransitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
+                    <Grid
+                        x:Name="TranslationFieldsGrid"
+                        ColumnSpacing="16"
+                        RowSpacing="16">
+                        <Grid.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </Grid.ChildrenTransitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel
+                            x:Name="SourceField"
+                            Grid.ColumnSpan="2"
+                            Spacing="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" MinWidth="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Source" />
+                                    <Button
+                                        Padding="8,4"
+                                        Command="{x:Bind CopyCommand}"
+                                        Content="{ui:FontIcon FontSize=16,
+                                                              Glyph=&#xE16F;}"
+                                        ToolTipService.ToolTip="Copy to Clipboard">
+                                        <Button.CommandParameter>
+                                            <x:Boolean>True</x:Boolean>
+                                        </Button.CommandParameter>
+                                    </Button>
+                                </StackPanel>
+
+                                <ComboBox
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{x:Bind service.SupportedSourceLanguages}"
+                                    SelectedIndex="0"
+                                    SelectionChanged="OnSourceComboBoxSelectionChanged" />
+                            </Grid>
+
+                            <TextBox
+                                x:Name="SourceTextBox"
+                                Height="100"
+                                AcceptsReturn="True"
+                                TextChanged="OnSourceTextBoxTextChanged" />
+                        </StackPanel>
+
+                        <StackPanel
+                            x:Name="TranslationField"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Spacing="8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" MinWidth="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Translation" />
+                                    <Button
+                                        Padding="8,4"
+                                        Command="{x:Bind CopyCommand}"
+                                        Content="{ui:FontIcon FontSize=16,
+                                                              Glyph=&#xE16F;}"
+                                        ToolTipService.ToolTip="Copy to Clipboard">
+                                        <Button.CommandParameter>
+                                            <x:Boolean>False</x:Boolean>
+                                        </Button.CommandParameter>
+                                    </Button>
+                                </StackPanel>
+
+                                <ComboBox
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Stretch"
+                                    ItemsSource="{x:Bind service.SupportedTranslationLanguages}"
+                                    SelectedIndex="0"
+                                    SelectionChanged="OnTranslationComboBoxSelectionChanged" />
+                            </Grid>
+
+                            <TextBox
+                                MinHeight="100"
+                                AcceptsReturn="True"
+                                IsReadOnly="True"
+                                Text="{x:Bind ViewModel.TranslatedText, Mode=OneWay}" />
+                        </StackPanel>
+                    </Grid>
 
                     <StackPanel
-                        x:Name="SourceField"
-                        Grid.ColumnSpan="2"
-                        Spacing="8">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" MinWidth="100" />
-                            </Grid.ColumnDefinitions>
+                        x:Name="ControlsField"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="16">
+                        <muxc:ProgressRing
+                            Width="20"
+                            Height="20"
+                            IsActive="{x:Bind ViewModel.TranslateCommand.IsRunning, Mode=OneWay}" />
 
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Source" />
-                                <Button
-                                    Padding="8,4"
-                                    Command="{x:Bind CopyCommand}"
-                                    Content="{ui:FontIcon FontSize=16,
-                                                          Glyph=&#xE16F;}"
-                                    ToolTipService.ToolTip="Copy to Clipboard">
-                                    <Button.CommandParameter>
-                                        <x:Boolean>True</x:Boolean>
-                                    </Button.CommandParameter>
-                                </Button>
-                            </StackPanel>
-
-                            <ComboBox
-                                Grid.Column="2"
-                                HorizontalAlignment="Stretch"
-                                ItemsSource="{x:Bind service.SupportedSourceLanguages}"
-                                SelectedIndex="0"
-                                SelectionChanged="OnSourceComboBoxSelectionChanged" />
-                        </Grid>
-
-                        <TextBox
-                            x:Name="SourceTextBox"
-                            Height="100"
-                            AcceptsReturn="True"
-                            TextChanged="OnSourceTextBoxTextChanged" />
+                        <Button
+                            Command="{x:Bind ViewModel.TranslateCommand, Mode=OneWay}"
+                            Content="Translate"
+                            Style="{ThemeResource AccentButtonStyle}">
+                            <Button.CommandParameter>
+                                <x:Boolean>True</x:Boolean>
+                            </Button.CommandParameter>
+                        </Button>
                     </StackPanel>
 
                     <StackPanel
-                        x:Name="TranslationField"
-                        Grid.Row="1"
-                        Grid.ColumnSpan="2"
-                        Spacing="8">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" MinWidth="100" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Translation" />
-                                <Button
-                                    Padding="8,4"
-                                    Command="{x:Bind CopyCommand}"
-                                    Content="{ui:FontIcon FontSize=16,
-                                                          Glyph=&#xE16F;}"
-                                    ToolTipService.ToolTip="Copy to Clipboard">
-                                    <Button.CommandParameter>
-                                        <x:Boolean>False</x:Boolean>
-                                    </Button.CommandParameter>
-                                </Button>
-                            </StackPanel>
-
-                            <ComboBox
-                                Grid.Column="2"
-                                HorizontalAlignment="Stretch"
-                                ItemsSource="{x:Bind service.SupportedTranslationLanguages}"
-                                SelectedIndex="0"
-                                SelectionChanged="OnTranslationComboBoxSelectionChanged" />
-                        </Grid>
-
-                        <TextBox
-                            MinHeight="100"
-                            AcceptsReturn="True"
-                            IsReadOnly="True"
-                            Text="{x:Bind ViewModel.TranslatedText, Mode=OneWay}" />
+                        Orientation="Horizontal"
+                        Spacing="12">
+                        <FontIcon Glyph="&#xE81C;" />
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="History" />
                     </StackPanel>
-                </Grid>
 
-                <StackPanel
-                    x:Name="ControlsField"
-                    HorizontalAlignment="Right"
-                    Orientation="Horizontal"
-                    Spacing="16">
-                    <muxc:ProgressRing
-                        Width="20"
-                        Height="20"
-                        IsActive="{x:Bind ViewModel.TranslateCommand.IsRunning, Mode=OneWay}" />
-
-                    <Button
-                        Command="{x:Bind ViewModel.TranslateCommand, Mode=OneWay}"
-                        Content="Translate"
-                        Style="{ThemeResource AccentButtonStyle}" />
+                    <muxc:ProgressRing IsActive="{x:Bind ViewModel.GetTranslationHistoryCommand.IsRunning, Mode=OneWay}" Visibility="{x:Bind ViewModel.GetTranslationHistoryCommand.IsRunning, Mode=OneWay}" />
                 </StackPanel>
-            </StackPanel>
-        </ScrollViewer>
+            </ListView.Header>
+        </ListView>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SizeStates">
