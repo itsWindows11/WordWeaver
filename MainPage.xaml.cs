@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,7 +34,18 @@ namespace WordWeaver
 
             ViewModel.GetTranslationHistoryCommand?.Execute(null);
 
+            OnTranslationHistoryCollectionChanged(null, null);
+            ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
+
             Unloaded += OnMainPageUnloaded;
+        }
+
+        private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (!ViewModel.TranslationHistory.Any())
+                VisualStateManager.GoToState(this, "NoHistoryState", false);
+            else
+                VisualStateManager.GoToState(this, "HistoryAvailableState", false);
         }
 
         [RelayCommand]
@@ -90,6 +102,13 @@ namespace WordWeaver
             ViewModel.SelectedTranslationLangInfo = (LanguageInfo)comboBox.SelectedItem;
 
             await ViewModel.TranslateCommand?.ExecuteAsync(false);
+        }
+
+        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var item = (TranslationHistory)((FrameworkElement)e.OriginalSource).DataContext;
+
+            ViewModel.RemoveHistoryItemCommand?.Execute(item);
         }
     }
 }

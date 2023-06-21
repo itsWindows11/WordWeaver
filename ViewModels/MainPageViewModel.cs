@@ -41,6 +41,20 @@ namespace WordWeaver.ViewModels
         }
 
         [RelayCommand]
+        public async Task ClearTranslationHistoryAsync()
+        {
+            await Ioc.Default.GetRequiredService<IRepositoryService>().ClearHistoryAsync();
+            TranslationHistory.Clear();
+        }
+
+        [RelayCommand]
+        public async Task RemoveHistoryItemAsync(TranslationHistory history)
+        {
+            await Ioc.Default.GetRequiredService<IRepositoryService>().DeleteHistoryItemAsync(history);
+            TranslationHistory.Remove(history);
+        }
+
+        [RelayCommand]
         private async Task TranslateAsync(bool isButton)
         {
             if (string.IsNullOrWhiteSpace(SourceText)) return;
@@ -55,6 +69,8 @@ namespace WordWeaver.ViewModels
                 {
                     SourceText = SourceText,
                     TranslatedText = TranslatedText,
+                    SourceLanguage = SelectedSourceLangInfo.LanguageCode,
+                    TranslationLanguage = SelectedTranslationLangInfo.LanguageCode,
                     Date = DateTime.UtcNow
                 };
 

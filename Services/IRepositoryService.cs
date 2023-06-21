@@ -14,5 +14,7 @@ namespace WordWeaver.Services
         Task DeleteHistoryItemAsync(TranslationHistory item);
 
         Task AddSavedTranslationAsync(TranslationHistory item);
+
+        Task ClearHistoryAsync();
     }
 }

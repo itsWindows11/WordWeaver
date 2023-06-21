@@ -120,6 +120,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\LocaleToLanguageLabelConverter.cs" />
     <Compile Include="JsonSerializationContext.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -137,6 +138,9 @@
     <Compile Include="Services\ITranslationService.cs" />
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\TranslationItemControl.xaml.cs">
+      <DependentUpon>TranslationItemControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\MainPageViewModel.cs" />
   </ItemGroup>
@@ -165,6 +169,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\TranslationItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

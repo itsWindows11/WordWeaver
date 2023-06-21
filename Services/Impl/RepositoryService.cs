@@ -39,5 +39,10 @@ namespace WordWeaver.Services
         {
             return _connection.InsertOrReplaceAsync(item);
         }
+
+        public Task ClearHistoryAsync()
+        {
+            return _connection.Table<TranslationHistory>().Where(_ => true).DeleteAsync();
+        }
     }
 }
