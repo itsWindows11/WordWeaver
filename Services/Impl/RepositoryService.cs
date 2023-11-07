@@ -42,7 +42,12 @@ namespace WordWeaver.Services
 
         public Task ClearHistoryAsync()
         {
-            return _connection.Table<TranslationHistory>().Where(_ => true).DeleteAsync();
+            return _connection.Table<TranslationHistory>().DeleteAsync();
+        }
+
+        public async Task<IList<TranslationHistory>> GetSavedTranslationsAsync(int maxCount)
+        {
+            return await _connection.Table<TranslationHistory>().Take(maxCount).ToListAsync();
         }
     }
 }

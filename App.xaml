@@ -9,6 +9,14 @@
             <muxc:XamlControlsResources.MergedDictionaries>
                 <ResourceDictionary>
                     <converters:LocaleToLanguageLabelConverter x:Key="LocaleToLanguageLabelConverter" />
+
+                    <Style
+                        x:Key="TransparentButtonStyle"
+                        BasedOn="{StaticResource DefaultButtonStyle}"
+                        TargetType="Button">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="BorderThickness" Value="0" />
+                    </Style>
                 </ResourceDictionary>
             </muxc:XamlControlsResources.MergedDictionaries>
         </muxc:XamlControlsResources>

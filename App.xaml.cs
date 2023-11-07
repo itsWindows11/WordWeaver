@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using WordWeaver.Services;
+using WordWeaver.ViewModels;
 
 namespace WordWeaver
 {
@@ -48,8 +49,13 @@ namespace WordWeaver
 
             var serviceCollection = new ServiceCollection();
 
+            // Services
             serviceCollection.AddSingleton<ITranslationService, LibreTranslateService>();
             serviceCollection.AddSingleton<IRepositoryService, RepositoryService>();
+
+            // View Models
+            serviceCollection.AddSingleton<HomePageViewModel>();
+            serviceCollection.AddSingleton<HistoryPageViewModel>();
 
             Ioc.Default.ConfigureServices(serviceCollection.BuildServiceProvider());
 
