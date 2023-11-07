@@ -34,7 +34,9 @@ namespace WordWeaver.ViewModels
         [RelayCommand]
         public async Task GetTranslationHistoryAsync()
         {
-            foreach (var item in await Ioc.Default.GetRequiredService<IRepositoryService>().GetSavedTranslationsAsync())
+            foreach (var item in await Ioc.Default
+                .GetRequiredService<IRepositoryService>()
+                .GetSavedTranslationsAsync())
             {
                 TranslationHistory.Add(item);
             }
@@ -55,29 +57,33 @@ namespace WordWeaver.ViewModels
         }
 
         [RelayCommand]
-        private async Task TranslateAsync(bool isButton)
+        private async Task TranslateAsync(bool shouldSaveToHistory)
         {
             if (string.IsNullOrWhiteSpace(SourceText)) return;
+
+            SourceCharCount = SourceText.Length;
 
             TranslatedText = await Ioc.Default
                 .GetRequiredService<ITranslationService>()
                 .TranslateAsync(SourceText, SelectedSourceLangInfo.LanguageCode, SelectedTranslationLangInfo.LanguageCode);
 
-            if (isButton)
+            TranslationCharCount = TranslatedText.Length;
+
+            if (!shouldSaveToHistory)
+                return;
+
+            var item = new TranslationHistory()
             {
-                var item = new TranslationHistory()
-                {
-                    SourceText = SourceText,
-                    TranslatedText = TranslatedText,
-                    SourceLanguage = SelectedSourceLangInfo.LanguageCode,
-                    TranslationLanguage = SelectedTranslationLangInfo.LanguageCode,
-                    Date = DateTime.UtcNow
-                };
+                SourceText = SourceText,
+                TranslatedText = TranslatedText,
+                SourceLanguage = SelectedSourceLangInfo.LanguageCode,
+                TranslationLanguage = SelectedTranslationLangInfo.LanguageCode,
+                Date = DateTime.UtcNow
+            };
 
-                TranslationHistory.Add(item);
+            TranslationHistory.Add(item);
 
-                await Ioc.Default.GetRequiredService<IRepositoryService>().AddSavedTranslationAsync(item);
-            }
+            await Ioc.Default.GetRequiredService<IRepositoryService>().AddSavedTranslationAsync(item);
         }
     }
 }
