@@ -16,6 +16,8 @@ public sealed partial class HistoryPageViewModel : ObservableObject
     [RelayCommand]
     public async Task GetTranslationHistoryAsync()
     {
+        TranslationHistory.Clear();
+
         foreach (var item in await Ioc.Default
             .GetRequiredService<IRepositoryService>()
             .GetSavedTranslationsAsync())
