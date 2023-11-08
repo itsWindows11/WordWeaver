@@ -9,6 +9,8 @@ namespace WordWeaver.Services
     {
         Task<IList<TranslationHistory>> GetSavedTranslationsAsync();
 
+        Task<IList<TranslationHistory>> GetSavedTranslationsAsync(int maxCount);
+
         Task<TranslationHistory> GetSavedTranslationAsync(Guid id);
 
         Task DeleteHistoryItemAsync(TranslationHistory item);

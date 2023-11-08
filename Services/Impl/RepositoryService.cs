@@ -44,5 +44,10 @@ namespace WordWeaver.Services
         {
             return _connection.Table<TranslationHistory>().Where(_ => true).DeleteAsync();
         }
+
+        public async Task<IList<TranslationHistory>> GetSavedTranslationsAsync(int maxCount)
+        {
+            return await _connection.Table<TranslationHistory>().Take(maxCount).ToListAsync();
+        }
     }
 }

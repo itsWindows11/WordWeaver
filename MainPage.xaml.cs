@@ -1,90 +1,60 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Input;
-using Microsoft.Toolkit.Uwp.UI;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 using WordWeaver.Models;
-using WordWeaver.Services;
-using WordWeaver.ViewModels;
+using WordWeaver.Pages;
 
-namespace WordWeaver
+namespace WordWeaver;
+
+public sealed partial class MainPage : Page
 {
-    public sealed partial class MainPage : Page
+    public IList<NavigationItem> NavigationItems { get; } = new List<NavigationItem>()
     {
-        public MainPageViewModel ViewModel { get; } = new();
+        { new NavigationItem("Home", "\uE10F", typeof(HomePage)) },
+        { new NavigationItem("History", "\uE81C", typeof(HistoryPage)) },
+        { new NavigationItem("Settings", "\uE115", typeof(SettingsPage)) }
+    };
 
-        private DispatcherQueueTimer _timer;
-        private ITranslationService service = Ioc.Default.GetRequiredService<ITranslationService>();
+    public static readonly DependencyProperty SelectedNavigationItemIndexProperty =
+        DependencyProperty.Register(nameof(SelectedNavigationItemIndex), typeof(int), typeof(MainPage), new PropertyMetadata(0, OnSelectedNavigationItemChanged));
 
-        public MainPage()
-        {
-            InitializeComponent();
-            CustomTitleBar.SetTitleBarForCurrentView();
+    public int SelectedNavigationItemIndex
+    {
+        get => (int)GetValue(SelectedNavigationItemIndexProperty);
+        set => SetValue(SelectedNavigationItemIndexProperty, value);
+    }
 
-            _timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+    public MainPage()
+    {
+        InitializeComponent();
+        CustomTitleBar.SetTitleBarForCurrentView();
 
-            ViewModel.GetTranslationHistoryCommand?.Execute(null);
+        MainFrame.Navigate(typeof(HomePage));
+        MainFrame.Navigated += OnMainFrameNavigated;
+    }
 
-            OnTranslationHistoryCollectionChanged(null, null);
-            ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
-        }
+    private void OnMainFrameNavigated(object sender, NavigationEventArgs e)
+    {
+        SelectedNavigationItemIndex = NavigationItems.IndexOf(NavigationItems.FirstOrDefault(n => n.PageType == e.SourcePageType));
+    }
 
-        private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (!ViewModel.TranslationHistory.Any())
-                VisualStateManager.GoToState(this, "NoHistoryState", false);
-            else
-                VisualStateManager.GoToState(this, "HistoryAvailableState", false);
-        }
+    private static void OnSelectedNavigationItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var page = (MainPage)d;
+        var mainFrame = page.MainFrame;
 
-        [RelayCommand]
-        private void Copy(bool isSource = false)
-        {
-            var dataPackage = new DataPackage()
-            {
-                RequestedOperation = DataPackageOperation.Copy
-            };
+        mainFrame.Navigated -= page.OnMainFrameNavigated;
 
-            dataPackage.SetText(isSource ? ViewModel.SourceText : ViewModel.TranslatedText);
+        mainFrame.Navigate(page.NavigationItems[(int)e.NewValue].PageType);
 
-            Clipboard.SetContent(dataPackage);
-        }
+        mainFrame.Navigated += page.OnMainFrameNavigated;
+    }
 
-        private void OnSourceTextBoxTextChanged(object sender, TextChangedEventArgs args)
-        {
-            _timer.Debounce(() =>
-            {
-                var oldText = ViewModel.SourceText;
-                ViewModel.SourceText = SourceTextBox.Text;
-
-                if (!string.IsNullOrEmpty(ViewModel.SourceText) && oldText != ViewModel.SourceText)
-                    ViewModel.TranslateCommand?.Execute(false);
-            }, TimeSpan.FromSeconds(1500));
-        }
-
-        private void OnSourceComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var comboBox = (ComboBox)sender;
-            ViewModel.SelectedSourceLangInfo = (LanguageInfo)comboBox.SelectedItem;
-
-            ViewModel.TranslateCommand?.Execute(false);
-        }
-
-        private void OnTranslationComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var comboBox = (ComboBox)sender;
-            ViewModel.SelectedTranslationLangInfo = (LanguageInfo)comboBox.SelectedItem;
-            ViewModel.TranslateCommand?.Execute(false);
-        }
-
-        private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var item = (TranslationHistory)((FrameworkElement)e.OriginalSource).DataContext;
-            ViewModel.RemoveHistoryItemCommand?.Execute(item);
-        }
+    private void OnPageUnloaded(object sender, RoutedEventArgs e)
+    {
+        MainFrame.Navigated -= OnMainFrameNavigated;
     }
 }

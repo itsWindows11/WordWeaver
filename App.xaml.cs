@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -8,6 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using WordWeaver.Services;
+using WordWeaver.ViewModels;
 
 namespace WordWeaver
 {
@@ -48,8 +50,13 @@ namespace WordWeaver
 
             var serviceCollection = new ServiceCollection();
 
+            // Services
             serviceCollection.AddSingleton<ITranslationService, LibreTranslateService>();
             serviceCollection.AddSingleton<IRepositoryService, RepositoryService>();
+
+            // View Models
+            serviceCollection.AddSingleton<HomePageViewModel>();
+            serviceCollection.AddSingleton<HistoryPageViewModel>();
 
             Ioc.Default.ConfigureServices(serviceCollection.BuildServiceProvider());
 
@@ -58,6 +65,8 @@ namespace WordWeaver
                 CoreApplication.EnablePrelaunch(true);
 
                 await ((RepositoryService)Ioc.Default.GetRequiredService<IRepositoryService>()).InitializeAsync();
+
+                BackdropMaterial.SetApplyToRootOrPageBackground(rootFrame, true);
 
                 if (rootFrame.Content == null)
                 {
