@@ -5,14 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WordWeaver.Models"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sk="using:SimpleKit.WindowsRuntime.UI.Controls"
+    xmlns:uc="using:WordWeaver.UserControls"
     d:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
     NavigationCacheMode="Enabled"
+    Unloaded="OnPageUnloaded"
     mc:Ignorable="d">
 
-    <Grid>
+    <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
@@ -35,23 +35,50 @@
             </sk:TitleBar.Icon>
         </sk:TitleBar>
 
-        <ListView Margin="4,0" Grid.Row="1" ItemsSource="{x:Bind NavigationItems}">
+        <ListView
+            Grid.Row="1"
+            Margin="4,0"
+            ItemsSource="{x:Bind NavigationItems}"
+            SelectedIndex="{x:Bind SelectedNavigationItemIndex, Mode=TwoWay}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                    <Setter Property="MinWidth" Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:NavigationItem">
-                    <StackPanel Orientation="Horizontal" Spacing="16">
-                        <FontIcon FontSize="16" Glyph="{x:Bind IconGlyph}" />
-                        <TextBlock Text="{x:Bind Label}" />
-                    </StackPanel>
+                    <uc:NavigationItemControl IconGlyph="{x:Bind IconGlyph}" Label="{x:Bind Label}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
         <Frame
             x:Name="MainFrame"
+            Padding="48,0"
             Grid.RowSpan="2"
             Grid.Column="1"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1,0,0,0" />
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SizeStates">
+                <VisualState x:Name="SmallState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="RootGrid.ColumnDefinitions[0].Width" Value="Auto" />
+                        <Setter Target="CustomTitleBar.Title" Value="       WordWeaver" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="DefaultState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

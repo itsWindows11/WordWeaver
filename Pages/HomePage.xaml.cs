@@ -17,14 +17,21 @@ public sealed partial class HomePage : Page
 {
     public HomePageViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<HomePageViewModel>();
 
-    private DispatcherQueueTimer _timer;
+    private DispatcherTimer _timer;
+    private bool _shouldTrigger;
     private ITranslationService service = Ioc.Default.GetRequiredService<ITranslationService>();
 
     public HomePage()
     {
         InitializeComponent();
 
-        _timer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+        _timer = new()
+        {
+            Interval = TimeSpan.FromMilliseconds(1500)
+        };
+
+        _timer.Tick += OnTimerTick;
+        _timer.Start();
 
         ViewModel.GetTranslationHistoryCommand?.Execute(null);
 
@@ -53,16 +60,29 @@ public sealed partial class HomePage : Page
         Clipboard.SetContent(dataPackage);
     }
 
+    private void OnPageUnloaded(object sender, RoutedEventArgs e)
+    {
+        _timer.Stop();
+        _timer.Tick -= OnTimerTick;
+    }
+
+    private void OnTimerTick(object sender, object e)
+    {
+        var oldText = ViewModel.SourceText;
+        ViewModel.SourceText = SourceTextBox.Text;
+
+        if (!string.IsNullOrEmpty(ViewModel.SourceText)
+            && oldText != ViewModel.SourceText
+            && _shouldTrigger)
+        {
+            _shouldTrigger = false;
+            ViewModel.TranslateCommand?.Execute(false);
+        }
+    }
+
     private void OnSourceTextBoxTextChanged(object sender, TextChangedEventArgs args)
     {
-        _timer.Debounce(() =>
-        {
-            var oldText = ViewModel.SourceText;
-            ViewModel.SourceText = SourceTextBox.Text;
-
-            if (!string.IsNullOrEmpty(ViewModel.SourceText) && oldText != ViewModel.SourceText)
-                ViewModel.TranslateCommand?.Execute(false);
-        }, TimeSpan.FromSeconds(1500));
+        _shouldTrigger = true;
     }
 
     private void OnSourceComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -77,12 +97,14 @@ public sealed partial class HomePage : Page
     {
         var comboBox = (ComboBox)sender;
         ViewModel.SelectedTranslationLangInfo = (LanguageInfo)comboBox.SelectedItem;
+
         ViewModel.TranslateCommand?.Execute(false);
     }
 
     private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
     {
         var item = (TranslationHistory)((FrameworkElement)e.OriginalSource).DataContext;
+
         ViewModel.RemoveHistoryItemCommand?.Execute(item);
     }
 }

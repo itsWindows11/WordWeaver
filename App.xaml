@@ -9,6 +9,7 @@
             <muxc:XamlControlsResources.MergedDictionaries>
                 <ResourceDictionary>
                     <converters:LocaleToLanguageLabelConverter x:Key="LocaleToLanguageLabelConverter" />
+                    <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
 
                     <Style
                         x:Key="TransparentButtonStyle"

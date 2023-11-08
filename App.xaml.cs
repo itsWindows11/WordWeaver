@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -64,6 +65,8 @@ namespace WordWeaver
                 CoreApplication.EnablePrelaunch(true);
 
                 await ((RepositoryService)Ioc.Default.GetRequiredService<IRepositoryService>()).InitializeAsync();
+
+                BackdropMaterial.SetApplyToRootOrPageBackground(rootFrame, true);
 
                 if (rootFrame.Content == null)
                 {

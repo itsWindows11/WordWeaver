@@ -1,0 +1,41 @@
+﻿<UserControl
+    x:Class="WordWeaver.UserControls.NavigationItemControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:WordWeaver.UserControls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
+
+    <StackPanel Orientation="Horizontal" Spacing="4">
+        <FontIcon Height="20" FontSize="16" Glyph="{x:Bind IconGlyph, Mode=OneWay}" />
+        
+        <TextBlock
+            x:Name="NavigationItemLabel"
+            Margin="12,0,0,0"
+            Text="{x:Bind Label, Mode=OneWay}"
+            Visibility="{x:Bind Label, Mode=OneWay, Converter={StaticResource EmptyStringToVisibilityConverter}}"/>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SizeStates">
+                <VisualState x:Name="SmallState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="NavigationItemLabel.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="DefaultState">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </StackPanel>
+</UserControl>
