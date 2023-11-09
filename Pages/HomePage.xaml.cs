@@ -111,14 +111,7 @@ public sealed partial class HomePage : Page
     {
         var comboBox = (ComboBox)sender;
 
-        var oldLangInfo = ViewModel.SelectedSourceLangInfo;
-        ViewModel.SelectedSourceLangInfo = (LanguageInfo)comboBox.SelectedItem;
-
-        if (oldLangInfo == ViewModel.SelectedTranslationLangInfo)
-        {
-            ViewModel.SelectedTranslationLangInfo = oldLangInfo;
-            return;
-        }
+        ViewModel.SelectedSourceLangInfoIndex = comboBox.SelectedIndex;
 
         ViewModel.TranslateCommand?.Execute(false);
     }
@@ -127,14 +120,7 @@ public sealed partial class HomePage : Page
     {
         var comboBox = (ComboBox)sender;
 
-        var oldLangInfo = ViewModel.SelectedTranslationLangInfo;
-        ViewModel.SelectedTranslationLangInfo = (LanguageInfo)comboBox.SelectedItem;
-
-        if (oldLangInfo == ViewModel.SelectedSourceLangInfo)
-        {
-            ViewModel.SelectedSourceLangInfo = oldLangInfo;
-            return;
-        }
+        ViewModel.SelectedTranslationLangInfoIndex = comboBox.SelectedIndex;
 
         ViewModel.TranslateCommand?.Execute(false);
     }

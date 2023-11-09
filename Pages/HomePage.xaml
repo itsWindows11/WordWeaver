@@ -88,7 +88,7 @@
                                     Grid.Column="2"
                                     HorizontalAlignment="Stretch"
                                     ItemsSource="{x:Bind service.SupportedSourceLanguages}"
-                                    SelectedItem="{x:Bind ViewModel.SelectedSourceLangInfo, Mode=TwoWay}"
+                                    SelectedIndex="{x:Bind ViewModel.SelectedTranslationLangInfoIndex, Mode=TwoWay}"
                                     SelectionChanged="OnSourceComboBoxSelectionChanged" />
                             </Grid>
 
@@ -130,7 +130,7 @@
                                     Grid.Column="2"
                                     HorizontalAlignment="Stretch"
                                     ItemsSource="{x:Bind service.SupportedTranslationLanguages}"
-                                    SelectedItem="{x:Bind ViewModel.SelectedTranslationLangInfo, Mode=TwoWay}"
+                                    SelectedIndex="{x:Bind ViewModel.SelectedTranslationLangInfoIndex, Mode=TwoWay}"
                                     SelectionChanged="OnTranslationComboBoxSelectionChanged" />
                             </Grid>
 

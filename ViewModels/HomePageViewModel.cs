@@ -24,12 +24,23 @@ public sealed partial class HomePageViewModel : ObservableObject
     private string _translatedText;
 
     [ObservableProperty]
-    private LanguageInfo _selectedSourceLangInfo;
+    private int _selectedSourceLangInfoIndex = 0;
 
     [ObservableProperty]
-    private LanguageInfo _selectedTranslationLangInfo;
+    private int _selectedTranslationLangInfoIndex = 1;
+
+    private ITranslationService _translationService;
+
+    public LanguageInfo SelectedSourceLanguageInfo => _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex];
+
+    public LanguageInfo SelectedTranslationLangInfo => _translationService.SupportedTranslationLanguages[SelectedTranslationLangInfoIndex];
 
     public ObservableCollection<TranslationHistory> TranslationHistory { get; } = new();
+
+    public HomePageViewModel(ITranslationService service)
+    {
+        _translationService = service;
+    }
 
     [RelayCommand]
     public async Task GetTranslationHistoryAsync()
@@ -67,7 +78,9 @@ public sealed partial class HomePageViewModel : ObservableObject
 
         TranslatedText = await Ioc.Default
             .GetRequiredService<ITranslationService>()
-            .TranslateAsync(SourceText, SelectedSourceLangInfo.LanguageCode, SelectedTranslationLangInfo.LanguageCode);
+            .TranslateAsync(SourceText,
+                _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex].LanguageCode,
+                _translationService.SupportedSourceLanguages[SelectedTranslationLangInfoIndex].LanguageCode);
 
         TranslationCharCount = TranslatedText.Length;
 
@@ -78,8 +91,8 @@ public sealed partial class HomePageViewModel : ObservableObject
         {
             SourceText = SourceText,
             TranslatedText = TranslatedText,
-            SourceLanguage = SelectedSourceLangInfo.LanguageCode,
-            TranslationLanguage = SelectedTranslationLangInfo.LanguageCode,
+            SourceLanguage = _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex].LanguageCode,
+            TranslationLanguage = _translationService.SupportedSourceLanguages[SelectedTranslationLangInfoIndex].LanguageCode,
             Date = DateTime.UtcNow
         };
 
