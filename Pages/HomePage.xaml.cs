@@ -126,7 +126,15 @@ public sealed partial class HomePage : Page
     private void OnTranslationComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         var comboBox = (ComboBox)sender;
+
+        var oldLangInfo = ViewModel.SelectedTranslationLangInfo;
         ViewModel.SelectedTranslationLangInfo = (LanguageInfo)comboBox.SelectedItem;
+
+        if (oldLangInfo == ViewModel.SelectedSourceLangInfo)
+        {
+            ViewModel.SelectedSourceLangInfo = oldLangInfo;
+            return;
+        }
 
         ViewModel.TranslateCommand?.Execute(false);
     }

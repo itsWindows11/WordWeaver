@@ -17,6 +17,11 @@ namespace WordWeaver.Services
         IList<LanguageInfo> SupportedTranslationLanguages { get; }
 
         /// <summary>
+        /// Populates <see cref="SupportedSourceLanguages"/> and <see cref="SupportedTranslationLanguages"/> with the supported languages by the remote translation service.
+        /// </summary>
+        Task FetchSupportedLanguagesAsync();
+
+        /// <summary>
         /// Translates text from a certain language to another.
         /// </summary>
         /// <param name="text">The text to translate.</param>

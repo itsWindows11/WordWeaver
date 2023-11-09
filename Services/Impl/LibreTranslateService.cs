@@ -15,63 +15,34 @@ namespace WordWeaver.Services
     {
         private HttpClient _httpClient;
 
-        private IList<LanguageInfo> _supportedSourceLanguages;
-        private IList<LanguageInfo> _supportedTranslationLanguages;
+        public IList<LanguageInfo> SupportedSourceLanguages { get; private set; }
 
-        public IList<LanguageInfo> SupportedSourceLanguages
+        public IList<LanguageInfo> SupportedTranslationLanguages { get; private set; }
+
+        public async Task FetchSupportedLanguagesAsync()
         {
-            get
+            _httpClient ??= new HttpClient();
+
+            using HttpRequestMessage message = new()
             {
-                return _supportedSourceLanguages ??= new List<LanguageInfo>()
-                {
-                    new("Auto", "auto"),
-                    new("English", "en"),
-                    new("Arabic", "ar"),
-                    new("Azerbaijani", "az"),
-                    new("Chinese", "zh"),
-                    new("Czech", "cs"),
-                    new("Danish", "da"),
-                    new("Dutch", "nl"),
-                    new("Esperanto", "eo"),
-                    new("Finnish", "fi"),
-                    new("French", "fr"),
-                    new("German", "de"),
-                    new("Greek", "el"),
-                    new("Hebrew", "he"),
-                    new("Hindi", "hi"),
-                    new("Hungarian", "hu"),
-                    new("Indonesian", "id"),
-                    new("Irish", "ga"),
-                    new("Italian", "it"),
-                    new("Japanese", "ja"),
-                    new("Korean", "ko"),
-                    new("Persian", "fa"),
-                    new("Polish", "pl"),
-                    new("Portuguese", "pt"),
-                    new("Russian", "ru"),
-                    new("Slovak", "sk"),
-                    new("Spanish", "es"),
-                    new("Swedish", "sv"),
-                    new("Turkish", "tr"),
-                    new("Ukranian", "uk")
-                };
-            }
-        }
+                RequestUri = new("https://libretranslate.org/languages"),
+                Method = HttpMethod.Get
+            };
 
-        public IList<LanguageInfo> SupportedTranslationLanguages
-        {
-            get
-            {
-                if (_supportedTranslationLanguages == null)
-                {
-                    var clonedList = SupportedSourceLanguages.ToList();
-                    clonedList.RemoveAt(0);
+            using var result = await _httpClient.TrySendRequestAsync(message, HttpCompletionOption.ResponseHeadersRead);
 
-                    _supportedTranslationLanguages = clonedList;
-                }
+            using var winrtStream = await result.ResponseMessage.Content.ReadAsInputStreamAsync();
 
-                return _supportedTranslationLanguages;
-            }
+            var translationResponse = await JsonSerializer.DeserializeAsync(winrtStream.AsStreamForRead(), JsonSerializationContext.Default.IListLibreSupportedLanguageItem);
+
+            var items = translationResponse.Select(l => new LanguageInfo(l.Name, l.Code)).ToList();
+
+            SupportedTranslationLanguages = items;
+
+            var sourceItems = items.ToList();
+            sourceItems.Insert(0, new LanguageInfo("Auto", "auto"));
+
+            SupportedSourceLanguages = sourceItems;
         }
 
         public async Task<string> TranslateAsync(string text, string fromLocale, string toLocale)
@@ -86,10 +57,10 @@ namespace WordWeaver.Services
                 Target = toLocale
             };
 
-            var httpContent = new HttpStringContent(JsonSerializer.Serialize(info), UnicodeEncoding.Utf8);
+            using var httpContent = new HttpStringContent(JsonSerializer.Serialize(info), UnicodeEncoding.Utf8);
             httpContent.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
 
-            HttpRequestMessage message = new()
+            using HttpRequestMessage message = new()
             {
                 Content = httpContent,
                 RequestUri = new("https://libretranslate.org/translate"),
