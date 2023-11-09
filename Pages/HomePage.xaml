@@ -130,7 +130,7 @@
                                     Grid.Column="2"
                                     HorizontalAlignment="Stretch"
                                     ItemsSource="{x:Bind service.SupportedTranslationLanguages}"
-                                    SelectedIndex="0"
+                                    SelectedIndex="1"
                                     SelectionChanged="OnTranslationComboBoxSelectionChanged" />
                             </Grid>
 
