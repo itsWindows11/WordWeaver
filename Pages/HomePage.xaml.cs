@@ -66,6 +66,20 @@ public sealed partial class HomePage : Page
             VisualStateManager.GoToState(this, "HistoryAvailableState", false);
     }
 
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
+        if (!string.IsNullOrEmpty(ViewModel.SourceText))
+        {
+            _timer.Stop();
+            _timer.Tick -= OnTimerTick;
+
+            SourceTextBox.Text = ViewModel.SourceText;
+
+            _timer.Start();
+            _timer.Tick += OnTimerTick;
+        }
+    }
+
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
         _timer.Stop();

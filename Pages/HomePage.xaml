@@ -11,6 +11,7 @@
     xmlns:uc="using:WordWeaver.UserControls"
     xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
     d:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="OnPageLoaded"
     Unloaded="OnPageUnloaded"
     mc:Ignorable="d">
     <Grid>
