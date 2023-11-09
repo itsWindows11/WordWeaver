@@ -1,30 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using WordWeaver.Models;
+using WordWeaver.ViewModels;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+namespace WordWeaver.Pages;
 
-namespace WordWeaver.Pages
+public sealed partial class HistoryPage : Page
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class HistoryPage : Page
+    public HistoryPageViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<HistoryPageViewModel>();
+
+    public HistoryPage()
     {
-        public HistoryPage()
-        {
-            this.InitializeComponent();
-        }
+        InitializeComponent();
+
+        ViewModel.GetTranslationHistoryCommand?.Execute(null);
+
+        OnTranslationHistoryCollectionChanged(null, null);
+        ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
+    }
+
+    private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (!ViewModel.TranslationHistory.Any())
+            VisualStateManager.GoToState(this, "NoHistoryState", false);
+        else
+            VisualStateManager.GoToState(this, "HistoryAvailableState", false);
+    }
+
+    private void OnPageUnloaded(object sender, RoutedEventArgs e)
+    {
+        ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
+    }
+
+    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+        var item = (TranslationHistory)((FrameworkElement)e.OriginalSource).DataContext;
+
+        ViewModel.RemoveHistoryItemCommand?.Execute(item);
     }
 }

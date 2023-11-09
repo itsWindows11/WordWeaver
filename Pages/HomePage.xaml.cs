@@ -39,12 +39,10 @@ public sealed partial class HomePage : Page
         ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
     }
 
-    private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    [RelayCommand]
+    private void OpenHistoryPage()
     {
-        if (!ViewModel.TranslationHistory.Any())
-            VisualStateManager.GoToState(this, "NoHistoryState", false);
-        else
-            VisualStateManager.GoToState(this, "HistoryAvailableState", false);
+        Frame.Navigate(typeof(HistoryPage));
     }
 
     [RelayCommand]
@@ -60,10 +58,20 @@ public sealed partial class HomePage : Page
         Clipboard.SetContent(dataPackage);
     }
 
+    private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (!ViewModel.TranslationHistory.Any())
+            VisualStateManager.GoToState(this, "NoHistoryState", false);
+        else
+            VisualStateManager.GoToState(this, "HistoryAvailableState", false);
+    }
+
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
         _timer.Stop();
         _timer.Tick -= OnTimerTick;
+
+        ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
     }
 
     private void OnTimerTick(object sender, object e)

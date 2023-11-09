@@ -83,7 +83,8 @@ public sealed partial class HomePageViewModel : ObservableObject
             Date = DateTime.UtcNow
         };
 
-        TranslationHistory.Add(item);
+        if (TranslationHistory.Count < 5)
+            TranslationHistory.Add(item);
 
         await Ioc.Default.GetRequiredService<IRepositoryService>().AddSavedTranslationAsync(item);
     }

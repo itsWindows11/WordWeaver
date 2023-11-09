@@ -10,6 +10,7 @@
                 <ResourceDictionary>
                     <converters:LocaleToLanguageLabelConverter x:Key="LocaleToLanguageLabelConverter" />
                     <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
+                    <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
 
                     <Style
                         x:Key="TransparentButtonStyle"

@@ -232,7 +232,19 @@
             </ListView.ItemTemplate>
 
             <ListView.Footer>
-                <UserControl Height="20" />
+                <StackPanel>
+                    <HyperlinkButton
+                        Margin="-8,8,0,0"
+                        Command="{x:Bind OpenHistoryPageCommand}"
+                        Visibility="{x:Bind ViewModel.TranslationHistory.Count, Mode=OneWay, Converter={StaticResource IntToVisibilityConverter}, ConverterParameter=5}">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="See more" />
+                            <FontIcon FontSize="14" Glyph="&#xE0E3;" />
+                        </StackPanel>
+                    </HyperlinkButton>
+
+                    <UserControl Height="20" />
+                </StackPanel>
             </ListView.Footer>
         </ListView>
 
