@@ -12,10 +12,12 @@ public sealed partial class LoadingPage : Page
     public LoadingPage()
     {
         InitializeComponent();
+        CustomTitleBar.SetTitleBarForCurrentView();
     }
 
     private async void OnPageLoaded(object sender, RoutedEventArgs e)
     {
+        await ((RepositoryService)Ioc.Default.GetRequiredService<IRepositoryService>()).InitializeAsync();
         await service.FetchSupportedLanguagesAsync();
         Frame.Navigate(typeof(MainPage));
     }

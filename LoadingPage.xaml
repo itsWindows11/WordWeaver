@@ -6,9 +6,18 @@
     xmlns:local="using:WordWeaver"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:sk="using:SimpleKit.WindowsRuntime.UI.Controls"
     d:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="OnPageLoaded"
     mc:Ignorable="d">
 
-    <muxc:ProgressRing Width="48" Height="48" />
+    <Grid>
+        <sk:TitleBar
+            x:Name="CustomTitleBar"
+            Height="40"
+            VerticalAlignment="Top"
+            Canvas.ZIndex="1" />
+
+        <muxc:ProgressRing Width="48" Height="48" />
+    </Grid>
 </Page>

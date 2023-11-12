@@ -11,6 +11,7 @@
                     <converters:LocaleToLanguageLabelConverter x:Key="LocaleToLanguageLabelConverter" />
                     <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
                     <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+                    <converters:ObjectToStringConverter x:Key="ObjectToStringConverter" />
 
                     <Style
                         x:Key="TransparentButtonStyle"

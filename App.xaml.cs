@@ -26,6 +26,24 @@ namespace WordWeaver
         {
             InitializeComponent();
             Suspending += OnSuspending;
+
+            ConfigureServices();
+        }
+
+        private void ConfigureServices()
+        {
+            var serviceCollection = new ServiceCollection();
+
+            // Services
+            serviceCollection.AddSingleton<ITranslationService, LibreTranslateService>();
+            serviceCollection.AddSingleton<IRepositoryService, RepositoryService>();
+            serviceCollection.AddSingleton<SettingsService>();
+
+            // View Models
+            serviceCollection.AddSingleton<HomePageViewModel>();
+            serviceCollection.AddSingleton<HistoryPageViewModel>();
+
+            Ioc.Default.ConfigureServices(serviceCollection.BuildServiceProvider());
         }
 
         /// <summary>
@@ -46,25 +64,13 @@ namespace WordWeaver
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+
+                rootFrame.RequestedTheme = Ioc.Default.GetRequiredService<SettingsService>().Theme;
             }
-
-            var serviceCollection = new ServiceCollection();
-
-            // Services
-            serviceCollection.AddSingleton<ITranslationService, LibreTranslateService>();
-            serviceCollection.AddSingleton<IRepositoryService, RepositoryService>();
-
-            // View Models
-            serviceCollection.AddSingleton<HomePageViewModel>();
-            serviceCollection.AddSingleton<HistoryPageViewModel>();
-
-            Ioc.Default.ConfigureServices(serviceCollection.BuildServiceProvider());
 
             if (!e.PrelaunchActivated)
             {
                 CoreApplication.EnablePrelaunch(true);
-
-                await ((RepositoryService)Ioc.Default.GetRequiredService<IRepositoryService>()).InitializeAsync();
 
                 BackdropMaterial.SetApplyToRootOrPageBackground(rootFrame, true);
 
