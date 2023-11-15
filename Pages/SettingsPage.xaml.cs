@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using WordWeaver.Services;
 
@@ -12,4 +14,8 @@ public sealed partial class SettingsPage : Page
     {
         InitializeComponent();
     }
+
+    [RelayCommand]
+    private Task ClearHistoryAsync()
+        => Ioc.Default.GetRequiredService<IRepositoryService>().ClearHistoryAsync();
 }

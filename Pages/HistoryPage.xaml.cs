@@ -3,6 +3,7 @@ using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WordWeaver.Models;
+using WordWeaver.Services;
 using WordWeaver.ViewModels;
 
 namespace WordWeaver.Pages;
@@ -10,6 +11,8 @@ namespace WordWeaver.Pages;
 public sealed partial class HistoryPage : Page
 {
     public HistoryPageViewModel ViewModel { get; } = Ioc.Default.GetRequiredService<HistoryPageViewModel>();
+
+    private SettingsService settingsService = Ioc.Default.GetRequiredService<SettingsService>();
 
     public HistoryPage()
     {

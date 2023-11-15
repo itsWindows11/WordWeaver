@@ -11,31 +11,73 @@
     mc:Ignorable="d">
 
     <ScrollViewer Margin="-48,0" Padding="48,0">
-        <StackPanel Spacing="4">
+        <StackPanel>
             <TextBlock
                 Margin="0,48,0,8"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="Settings" />
 
-            <settings:SettingsCard Description="Changes will take effect after you restart the app." Header="Theme">
-                <ComboBox ItemsSource="{ui:EnumValues Type=ElementTheme}" SelectedItem="{x:Bind _settingsService.Theme, Mode=TwoWay}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="ElementTheme">
-                            <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </settings:SettingsCard>
+            <StackPanel Margin="0,12,0,0" Spacing="4">
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition />
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
 
-            <settings:SettingsCard Description="The translation service to use for the app. Changes will take effect after you restart the app." Header="Translation service">
-                <ComboBox ItemsSource="{ui:EnumValues Type=enums:SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="enums:SupportedTranslationServices">
-                            <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </settings:SettingsCard>
+                <TextBlock
+                    Margin="0,0,0,8"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="General" />
+
+                <settings:SettingsCard
+                    Description="Changes will take effect after you restart the app."
+                    Header="Theme"
+                    HeaderIcon="{ui:FontIcon FontFamily={StaticResource SettingsIconsFontFamily},
+                                             Glyph=&#xE795;}">
+                    <ComboBox ItemsSource="{ui:EnumValues Type=ElementTheme}" SelectedItem="{x:Bind _settingsService.Theme, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="ElementTheme">
+                                <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </settings:SettingsCard>
+
+                <settings:SettingsCard
+                    Description="The translation service to use for the app. Changes will take effect after you restart the app."
+                    Header="Translation service"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE774;}">
+                    <ComboBox ItemsSource="{ui:EnumValues Type=enums:SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="enums:SupportedTranslationServices">
+                                <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </settings:SettingsCard>
+
+                <settings:SettingsCard
+                    Description="Toggle the ability to save items to history."
+                    Header="History"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE81C;}">
+                    <StackPanel Orientation="Horizontal">
+                        <ProgressRing
+                            Margin="0,0,16,0"
+                            IsActive="{x:Bind ClearHistoryCommand.IsRunning, Mode=OneWay}"
+                            Height="16"
+                            Width="16" />
+                        
+                        <Button
+                            Margin="0,0,16,0"
+                            Command="{x:Bind ClearHistoryCommand}"
+                            Content="Clear history data"
+                            IsEnabled="{x:Bind _settingsService.IsHistoryEnabled, Mode=OneWay}" />
+
+                        <ToggleSwitch IsOn="{x:Bind _settingsService.IsHistoryEnabled, Mode=TwoWay}" />
+                    </StackPanel>
+                </settings:SettingsCard>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </Page>

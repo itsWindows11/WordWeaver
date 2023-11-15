@@ -27,9 +27,10 @@ public sealed partial class HomePageViewModel : ObservableObject
     private int _selectedSourceLangInfoIndex = 0;
 
     [ObservableProperty]
-    private int _selectedTranslationLangInfoIndex = 1;
+    private int _selectedTranslationLangInfoIndex = 0;
 
     private ITranslationService _translationService;
+    private SettingsService _settingsService;
 
     public LanguageInfo SelectedSourceLanguageInfo => _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex];
 
@@ -37,9 +38,10 @@ public sealed partial class HomePageViewModel : ObservableObject
 
     public ObservableCollection<TranslationHistory> TranslationHistory { get; } = new();
 
-    public HomePageViewModel(ITranslationService service)
+    public HomePageViewModel(ITranslationService service, SettingsService settingsService)
     {
         _translationService = service;
+        _settingsService = settingsService;
     }
 
     [RelayCommand]
@@ -84,7 +86,7 @@ public sealed partial class HomePageViewModel : ObservableObject
 
         TranslationCharCount = TranslatedText.Length;
 
-        if (!shouldSaveToHistory)
+        if (!shouldSaveToHistory || !_settingsService.IsHistoryEnabled)
             return;
 
         var item = new TranslationHistory()

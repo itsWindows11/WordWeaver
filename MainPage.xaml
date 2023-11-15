@@ -6,11 +6,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:WordWeaver.Models"
     xmlns:sk="using:SimpleKit.WindowsRuntime.UI.Controls"
+    xmlns:tenmica="using:TenMica"
     xmlns:uc="using:WordWeaver.UserControls"
     d:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     NavigationCacheMode="Enabled"
     Unloaded="OnPageUnloaded"
     mc:Ignorable="d">
+
+    <Page.Background>
+        <tenmica:TenMicaBrush />
+    </Page.Background>
 
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
@@ -41,7 +46,7 @@
             ItemsSource="{x:Bind NavigationItems}"
             SelectedIndex="{x:Bind SelectedNavigationItemIndex, Mode=TwoWay}">
             <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
                     <Setter Property="MinWidth" Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
@@ -54,9 +59,9 @@
 
         <Frame
             x:Name="MainFrame"
-            Padding="48,0"
             Grid.RowSpan="2"
             Grid.Column="1"
+            Padding="48,0"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1,0,0,0" />

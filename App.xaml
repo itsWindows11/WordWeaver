@@ -13,6 +13,8 @@
                     <converters:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
                     <converters:ObjectToStringConverter x:Key="ObjectToStringConverter" />
 
+                    <FontFamily x:Key="SettingsIconsFontFamily">/Assets/SettingsIcons.ttf#Settings Fluent Icons</FontFamily>
+
                     <Style
                         x:Key="TransparentButtonStyle"
                         BasedOn="{StaticResource DefaultButtonStyle}"

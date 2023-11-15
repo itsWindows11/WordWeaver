@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using WordWeaver.Models;
 using WordWeaver.Pages;
@@ -48,7 +49,7 @@ public sealed partial class MainPage : Page
 
         mainFrame.Navigated -= page.OnMainFrameNavigated;
 
-        mainFrame.Navigate(page.NavigationItems[(int)e.NewValue].PageType);
+        mainFrame.Navigate(page.NavigationItems[(int)e.NewValue].PageType, null, new SuppressNavigationTransitionInfo());
 
         mainFrame.Navigated += page.OnMainFrameNavigated;
     }

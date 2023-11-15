@@ -7,9 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:sk="using:SimpleKit.WindowsRuntime.UI.Controls"
+    xmlns:tenmica="using:TenMica"
     d:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     Loaded="OnPageLoaded"
     mc:Ignorable="d">
+
+    <Page.Background>
+        <tenmica:TenMicaBrush />
+    </Page.Background>
 
     <Grid>
         <sk:TitleBar

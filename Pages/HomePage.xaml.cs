@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Toolkit.Uwp.UI;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
@@ -19,7 +20,9 @@ public sealed partial class HomePage : Page
 
     private DispatcherTimer _timer;
     private bool _shouldTrigger;
+
     private ITranslationService service = Ioc.Default.GetRequiredService<ITranslationService>();
+    private SettingsService settingsService = Ioc.Default.GetRequiredService<SettingsService>();
 
     public HomePage()
     {
@@ -35,8 +38,11 @@ public sealed partial class HomePage : Page
 
         ViewModel.GetTranslationHistoryCommand?.Execute(null);
 
-        OnTranslationHistoryCollectionChanged(null, null);
-        ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
+        if (settingsService.IsHistoryEnabled)
+        {
+            OnTranslationHistoryCollectionChanged(null, null);
+            ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
+        }
     }
 
     [RelayCommand]
@@ -68,16 +74,16 @@ public sealed partial class HomePage : Page
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-        if (!string.IsNullOrEmpty(ViewModel.SourceText))
-        {
-            _timer.Stop();
-            _timer.Tick -= OnTimerTick;
+        if (string.IsNullOrEmpty(ViewModel.SourceText))
+            return;
 
-            SourceTextBox.Text = ViewModel.SourceText;
+        _timer.Stop();
+        _timer.Tick -= OnTimerTick;
 
-            _timer.Start();
-            _timer.Tick += OnTimerTick;
-        }
+        SourceTextBox.Text = ViewModel.SourceText;
+
+        _timer.Start();
+        _timer.Tick += OnTimerTick;
     }
 
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
@@ -85,7 +91,10 @@ public sealed partial class HomePage : Page
         _timer.Stop();
         _timer.Tick -= OnTimerTick;
 
-        ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
+        if (settingsService.IsHistoryEnabled)
+        {
+            ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
+        }
     }
 
     private void OnTimerTick(object sender, object e)
@@ -105,24 +114,6 @@ public sealed partial class HomePage : Page
     private void OnSourceTextBoxTextChanged(object sender, TextChangedEventArgs args)
     {
         _shouldTrigger = true;
-    }
-
-    private void OnSourceComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var comboBox = (ComboBox)sender;
-
-        ViewModel.SelectedSourceLangInfoIndex = comboBox.SelectedIndex;
-
-        ViewModel.TranslateCommand?.Execute(false);
-    }
-
-    private void OnTranslationComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var comboBox = (ComboBox)sender;
-
-        ViewModel.SelectedTranslationLangInfoIndex = comboBox.SelectedIndex;
-
-        ViewModel.TranslateCommand?.Execute(false);
     }
 
     private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)

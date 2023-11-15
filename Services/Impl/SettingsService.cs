@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -26,6 +24,15 @@ public sealed partial class SettingsService : ObservableObject
         set => Set((int)value);
     }
 
+    public bool IsHistoryEnabled
+    {
+        get => Get(true);
+        set => Set(value);
+    }
+}
+
+public partial class SettingsService
+{
     public T Get<T>(T defaultValue = default, [CallerMemberName] string propertyName = null)
     {
         _localSettings[propertyName] ??= defaultValue;
