@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using TenMica;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -65,6 +66,7 @@ namespace WordWeaver
                 Window.Current.Content = rootFrame;
 
                 rootFrame.RequestedTheme = Ioc.Default.GetRequiredService<SettingsService>().Theme;
+                rootFrame.Background = new TenMicaBrush();
             }
 
             if (!e.PrelaunchActivated)

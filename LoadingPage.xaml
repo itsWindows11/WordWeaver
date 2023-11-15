@@ -12,10 +12,6 @@
     Loaded="OnPageLoaded"
     mc:Ignorable="d">
 
-    <Page.Background>
-        <tenmica:TenMicaBrush />
-    </Page.Background>
-
     <Grid>
         <sk:TitleBar
             x:Name="CustomTitleBar"

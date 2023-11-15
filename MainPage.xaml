@@ -13,10 +13,6 @@
     Unloaded="OnPageUnloaded"
     mc:Ignorable="d">
 
-    <Page.Background>
-        <tenmica:TenMicaBrush />
-    </Page.Background>
-
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
