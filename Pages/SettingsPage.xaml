@@ -48,7 +48,7 @@
                     Description="The translation service to use for the app. Changes will take effect after you restart the app."
                     Header="Translation service"
                     HeaderIcon="{ui:FontIcon Glyph=&#xE774;}">
-                    <ComboBox ItemsSource="{ui:EnumValues Type=enums:SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
+                    <ComboBox ItemsSource="{x:Bind SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="enums:SupportedTranslationServices">
                                 <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />

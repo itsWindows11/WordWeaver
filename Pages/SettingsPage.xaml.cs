@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using WordWeaver.Enums;
 using WordWeaver.Services;
 
 namespace WordWeaver.Pages;
@@ -9,6 +11,12 @@ namespace WordWeaver.Pages;
 public sealed partial class SettingsPage : Page
 {
     private SettingsService _settingsService = Ioc.Default.GetRequiredService<SettingsService>();
+
+    private IList<SupportedTranslationServices> SupportedTranslationServices { get; } = new List<SupportedTranslationServices>()
+    {
+        Enums.SupportedTranslationServices.LibreTranslate,
+        Enums.SupportedTranslationServices.GoogleTranslate
+    };
 
     public SettingsPage()
     {
