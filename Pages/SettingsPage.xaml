@@ -63,11 +63,11 @@
                     HeaderIcon="{ui:FontIcon Glyph=&#xE81C;}">
                     <StackPanel Orientation="Horizontal">
                         <ProgressRing
-                            Margin="0,0,16,0"
-                            IsActive="{x:Bind ClearHistoryCommand.IsRunning, Mode=OneWay}"
+                            Width="16"
                             Height="16"
-                            Width="16" />
-                        
+                            Margin="0,0,16,0"
+                            IsActive="{x:Bind ClearHistoryCommand.IsRunning, Mode=OneWay}" />
+
                         <Button
                             Margin="0,0,16,0"
                             Command="{x:Bind ClearHistoryCommand}"
@@ -77,6 +77,36 @@
                         <ToggleSwitch IsOn="{x:Bind _settingsService.IsHistoryEnabled, Mode=TwoWay}" />
                     </StackPanel>
                 </settings:SettingsCard>
+
+                <TextBlock
+                    Margin="0,16,0,8"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="About" />
+
+                <settings:SettingsExpander Header="WordWeaver" HeaderIcon="{ui:BitmapIcon ShowAsMonochrome=False, Source=ms-appx:///Assets/AppIcon.png}">
+                    <TextBlock>
+                        Version
+                        <Run Text="{x:Bind _settingsService.AppVersion}" />
+                    </TextBlock>
+
+                    <settings:SettingsExpander.Items>
+                        <settings:SettingsCard>
+                            <settings:SettingsCard.Header>
+                                <StackPanel>
+                                    <TextBlock Margin="0,8" Text="Related links" />
+
+                                    <StackPanel Orientation="Horizontal" Margin="-12,0,0,0">
+                                        <HyperlinkButton Content="Privacy Policy" />
+                                        <HyperlinkButton Content="License" />
+                                        <HyperlinkButton Content="Source code" />
+                                        <HyperlinkButton Content="Help translate" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </settings:SettingsCard.Header>
+                        </settings:SettingsCard>
+                    </settings:SettingsExpander.Items>
+                </settings:SettingsExpander>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

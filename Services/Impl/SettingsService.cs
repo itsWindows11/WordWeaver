@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Windows.ApplicationModel;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -28,6 +30,30 @@ public sealed partial class SettingsService : ObservableObject
     {
         get => Get(true);
         set => Set(value);
+    }
+}
+
+public partial class SettingsService
+{
+    public string AppVersion => GetAppVersion();
+
+    /// <summary>
+    /// Gets the current app version.
+    /// Uses <see cref="Package"/> on UWP or <see cref="Assembly" /> if on other .NET platforms.
+    /// </summary>
+    /// <returns>The current app version in the format "major.minor.build.revision".</returns>
+    private static string GetAppVersion()
+    {
+#if WINDOWS_UWP
+        var package = Package.Current;
+        var packageId = package.Id;
+        var version = packageId.Version;
+
+        return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+#else
+        var version = typeof(App).Assembly.GetName().Version;
+        return $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+#endif
     }
 }
 
