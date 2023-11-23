@@ -30,7 +30,7 @@ public sealed partial class HomePage : Page
 
         _timer = new()
         {
-            Interval = TimeSpan.FromMilliseconds(1500)
+            Interval = TimeSpan.FromMilliseconds(2000)
         };
 
         ViewModel.PropertyChanging += OnViewModelPropertyChanging;
@@ -40,22 +40,19 @@ public sealed partial class HomePage : Page
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrEmpty(ViewModel.SourceText))
-            return;
-
-        _timer.Stop();
-        _timer.Tick -= OnTimerTick;
-
-        SourceTextBox.Text = ViewModel.SourceText;
-
-        _timer.Start();
-        _timer.Tick += OnTimerTick;
-
         if (settingsService.IsHistoryEnabled)
         {
             OnTranslationHistoryCollectionChanged(null, null);
             ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
         }
+
+        if (!string.IsNullOrEmpty(ViewModel.SourceText))
+        {
+            SourceTextBox.Text = ViewModel.SourceText;
+        }
+
+        _timer.Start();
+        _timer.Tick += OnTimerTick;
     }
 
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
