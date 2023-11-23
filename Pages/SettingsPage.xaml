@@ -10,6 +10,11 @@
     d:Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <!-- Workaround for .NET Native issue with ui:EnumValues -->
+        <enums:SupportedTranslationServices x:Key="DummyTranslationService">LibreTranslate</enums:SupportedTranslationServices>
+    </Page.Resources>
+
     <ScrollViewer Margin="-48,0" Padding="48,0">
         <StackPanel>
             <TextBlock
@@ -48,7 +53,7 @@
                     Description="The translation service to use for the app. Changes will take effect after you restart the app."
                     Header="Translation service"
                     HeaderIcon="{ui:FontIcon Glyph=&#xE774;}">
-                    <ComboBox ItemsSource="{x:Bind SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
+                    <ComboBox ItemsSource="{ui:EnumValues Type=enums:SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="enums:SupportedTranslationServices">
                                 <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />

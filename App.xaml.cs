@@ -10,10 +10,11 @@ using TenMica;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using WordWeaver.Constants;
+using WordWeaver.Enums;
 using WordWeaver.Services;
 using WordWeaver.ViewModels;
 
@@ -43,12 +44,22 @@ public sealed partial class App : Application
         ConfigureServices();
     }
 
-    private void ConfigureServices()
+    public void ConfigureServices()
     {
         var serviceCollection = new ServiceCollection();
 
         // Services
-        serviceCollection.AddSingleton<ITranslationService, LibreTranslateService>();
+        if (ApplicationData.Current.LocalSettings.Values.TryGetValue(nameof(SettingsService.SelectedService), out object value)
+            && value is int @enum
+            && @enum == (int)SupportedTranslationServices.GoogleTranslate)
+        {
+            serviceCollection.AddSingleton<ITranslationService, GoogleTranslateService>();
+        }
+        else
+        {
+            serviceCollection.AddSingleton<ITranslationService, LibreTranslateService>();
+        }
+
         serviceCollection.AddSingleton<IRepositoryService, RepositoryService>();
         serviceCollection.AddSingleton<SettingsService>();
 
