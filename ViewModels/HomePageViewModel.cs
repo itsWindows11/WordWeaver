@@ -24,17 +24,27 @@ public sealed partial class HomePageViewModel : ObservableObject
     private string _translatedText;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SelectedSourceLanguageInfo))]
     private int _selectedSourceLangInfoIndex = 0;
 
     [ObservableProperty]
-    private int _selectedTranslationLangInfoIndex = 0;
+    [NotifyPropertyChangedFor(nameof(SelectedTranslationLangInfo))]
+    private int _selectedTranslationLangInfoIndex = 1;
 
     private ITranslationService _translationService;
     private SettingsService _settingsService;
 
-    public LanguageInfo SelectedSourceLanguageInfo => _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex];
+    public LanguageInfo SelectedSourceLanguageInfo
+    {
+        get => _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex];
+        set => SelectedSourceLangInfoIndex = _translationService.SupportedSourceLanguages.IndexOf(value);
+    }
 
-    public LanguageInfo SelectedTranslationLangInfo => _translationService.SupportedTranslationLanguages[SelectedTranslationLangInfoIndex];
+    public LanguageInfo SelectedTranslationLangInfo
+    {
+        get => _translationService.SupportedTranslationLanguages[SelectedTranslationLangInfoIndex];
+        set => SelectedTranslationLangInfoIndex = _translationService.SupportedTranslationLanguages.IndexOf(value);
+    }
 
     public ObservableCollection<TranslationHistory> TranslationHistory { get; } = new();
 
@@ -81,8 +91,8 @@ public sealed partial class HomePageViewModel : ObservableObject
         TranslatedText = await Ioc.Default
             .GetRequiredService<ITranslationService>()
             .TranslateAsync(SourceText,
-                _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex].LanguageCode,
-                _translationService.SupportedSourceLanguages[SelectedTranslationLangInfoIndex].LanguageCode);
+                SelectedSourceLanguageInfo.LanguageCode,
+                SelectedTranslationLangInfo.LanguageCode);
 
         TranslationCharCount = TranslatedText.Length;
 
@@ -93,8 +103,8 @@ public sealed partial class HomePageViewModel : ObservableObject
         {
             SourceText = SourceText,
             TranslatedText = TranslatedText,
-            SourceLanguage = _translationService.SupportedSourceLanguages[SelectedSourceLangInfoIndex].LanguageCode,
-            TranslationLanguage = _translationService.SupportedSourceLanguages[SelectedTranslationLangInfoIndex].LanguageCode,
+            SourceLanguage = SelectedSourceLanguageInfo.LanguageCode,
+            TranslationLanguage = SelectedTranslationLangInfo.LanguageCode,
             Date = DateTime.UtcNow
         };
 

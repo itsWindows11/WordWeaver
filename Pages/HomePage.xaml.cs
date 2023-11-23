@@ -33,43 +33,9 @@ public sealed partial class HomePage : Page
             Interval = TimeSpan.FromMilliseconds(1500)
         };
 
-        _timer.Tick += OnTimerTick;
-        _timer.Start();
+        ViewModel.PropertyChanging += OnViewModelPropertyChanging;
 
         ViewModel.GetTranslationHistoryCommand?.Execute(null);
-
-        if (settingsService.IsHistoryEnabled)
-        {
-            OnTranslationHistoryCollectionChanged(null, null);
-            ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
-        }
-    }
-
-    [RelayCommand]
-    private void OpenHistoryPage()
-    {
-        Frame.Navigate(typeof(HistoryPage));
-    }
-
-    [RelayCommand]
-    private void Copy(bool isSource = false)
-    {
-        var dataPackage = new DataPackage()
-        {
-            RequestedOperation = DataPackageOperation.Copy
-        };
-
-        dataPackage.SetText(isSource ? ViewModel.SourceText : ViewModel.TranslatedText);
-
-        Clipboard.SetContent(dataPackage);
-    }
-
-    private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-    {
-        if (!ViewModel.TranslationHistory.Any())
-            VisualStateManager.GoToState(this, "NoHistoryState", false);
-        else
-            VisualStateManager.GoToState(this, "HistoryAvailableState", false);
     }
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
@@ -84,6 +50,12 @@ public sealed partial class HomePage : Page
 
         _timer.Start();
         _timer.Tick += OnTimerTick;
+
+        if (settingsService.IsHistoryEnabled)
+        {
+            OnTranslationHistoryCollectionChanged(null, null);
+            ViewModel.TranslationHistory.CollectionChanged += OnTranslationHistoryCollectionChanged;
+        }
     }
 
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
@@ -91,10 +63,56 @@ public sealed partial class HomePage : Page
         _timer.Stop();
         _timer.Tick -= OnTimerTick;
 
+        ViewModel.PropertyChanging -= OnViewModelPropertyChanging;
+
         if (settingsService.IsHistoryEnabled)
-        {
             ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
+    }
+}
+
+// Events
+public partial class HomePage
+{
+    private void OnTranslationHistoryCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        if (!ViewModel.TranslationHistory.Any())
+            VisualStateManager.GoToState(this, "NoHistoryState", false);
+        else
+            VisualStateManager.GoToState(this, "HistoryAvailableState", false);
+    }
+
+    private void OnViewModelPropertyChanging(object sender, PropertyChangingEventArgs e)
+    {
+        ViewModel.PropertyChanging -= OnViewModelPropertyChanging;
+
+        if (e.PropertyName == nameof(ViewModel.SelectedSourceLangInfoIndex))
+        {
+            if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem
+                && ViewModel.SelectedSourceLanguageInfo.LanguageCode != "auto")
+            {
+                var previousSourceLangInfo = ViewModel.SelectedSourceLanguageInfo;
+                var previousTranslationLangInfo = ViewModel.SelectedTranslationLangInfo;
+
+                ViewModel.SelectedTranslationLangInfo = previousSourceLangInfo;
+                ViewModel.SelectedSourceLanguageInfo = previousTranslationLangInfo;
+            } else if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem)
+            {
+                ViewModel.SelectedTranslationLangInfoIndex = ViewModel.SelectedSourceLangInfoIndex + 2;
+            }
+        } else if (e.PropertyName == nameof(ViewModel.SelectedTranslationLangInfoIndex))
+        {
+            if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem
+                && ViewModel.SelectedSourceLanguageInfo.LanguageCode != "auto")
+            {
+                var previousSourceLangInfo = ViewModel.SelectedSourceLanguageInfo;
+                var previousTranslationLangInfo = ViewModel.SelectedTranslationLangInfo;
+
+                ViewModel.SelectedTranslationLangInfo = previousSourceLangInfo;
+                ViewModel.SelectedSourceLanguageInfo = previousTranslationLangInfo;
+            }
         }
+
+        ViewModel.PropertyChanging += OnViewModelPropertyChanging;
     }
 
     private void OnTimerTick(object sender, object e)
@@ -121,5 +139,28 @@ public sealed partial class HomePage : Page
         var item = (TranslationHistory)((FrameworkElement)e.OriginalSource).DataContext;
 
         ViewModel.RemoveHistoryItemCommand?.Execute(item);
+    }
+}
+
+// Commands
+public partial class HomePage
+{
+    [RelayCommand]
+    private void OpenHistoryPage()
+    {
+        Frame.Navigate(typeof(HistoryPage));
+    }
+
+    [RelayCommand]
+    private void Copy(bool isSource = false)
+    {
+        var dataPackage = new DataPackage()
+        {
+            RequestedOperation = DataPackageOperation.Copy
+        };
+
+        dataPackage.SetText(isSource ? ViewModel.SourceText : ViewModel.TranslatedText);
+
+        Clipboard.SetContent(dataPackage);
     }
 }
