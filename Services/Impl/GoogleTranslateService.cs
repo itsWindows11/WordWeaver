@@ -18,12 +18,17 @@ public sealed partial class GoogleTranslateService : ITranslationService
 
     public IList<LanguageInfo> SupportedTranslationLanguages { get; private set; }
 
-    public Task FetchSupportedLanguagesAsync()
+    public async Task FetchSupportedLanguagesAsync()
     {
+        // For the sake of testing the network connection before using the API,
+        // we'll just get translate.google.com and only ensure that the request
+        // is successful.
+
+        using var response = await _client.GetAsync(new Uri("https://translate.google.com"));
+        response.EnsureSuccessStatusCode();
+
         SupportedSourceLanguages = SupportedTranslationLanguages = languageDictionary.Select(x => new LanguageInfo(x.Key, x.Value)).ToList();
         SupportedTranslationLanguages.Insert(0, new("Auto", "auto"));
-
-        return Task.CompletedTask;
     }
 
     public async Task<string> TranslateAsync(string text, string fromLocale, string toLocale)
