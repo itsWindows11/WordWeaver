@@ -12,7 +12,7 @@ namespace WordWeaver.Services;
 
 public sealed partial class GoogleTranslateService : ITranslationService
 {
-    private HttpClient _client = new();
+    private readonly HttpClient _client = new();
 
     public IList<LanguageInfo> SupportedSourceLanguages { get; private set; }
 
@@ -27,8 +27,10 @@ public sealed partial class GoogleTranslateService : ITranslationService
         using var response = await _client.GetAsync(new Uri("https://translate.google.com"));
         response.EnsureSuccessStatusCode();
 
-        SupportedSourceLanguages = SupportedTranslationLanguages = languageDictionary.Select(x => new LanguageInfo(x.Key, x.Value)).ToList();
-        SupportedTranslationLanguages.Insert(0, new("Auto", "auto"));
+        SupportedSourceLanguages = languageDictionary.Select(x => new LanguageInfo(x.Key, x.Value)).ToList();
+        SupportedSourceLanguages.Insert(0, new("Auto", "auto"));
+
+        SupportedTranslationLanguages = languageDictionary.Select(x => new LanguageInfo(x.Key, x.Value)).ToList();
     }
 
     public async Task<string> TranslateAsync(string text, string fromLocale, string toLocale)
