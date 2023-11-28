@@ -41,27 +41,29 @@
                 <StackPanel Margin="0,12,0,0">
                     <Grid
                         x:Name="TranslationFieldsGrid"
-                        ColumnSpacing="16"
-                        RowSpacing="16">
+                        ColumnSpacing="8"
+                        RowSpacing="8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+
                         <Grid.ChildrenTransitions>
                             <TransitionCollection>
                                 <RepositionThemeTransition IsStaggeringEnabled="False" />
                             </TransitionCollection>
                         </Grid.ChildrenTransitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-
                         <StackPanel
                             x:Name="SourceField"
-                            Grid.ColumnSpan="2"
+                            Grid.ColumnSpan="3"
                             Spacing="8">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -77,6 +79,7 @@
                                         Command="{x:Bind CopyCommand}"
                                         Content="{ui:FontIcon FontSize=16,
                                                               Glyph=&#xE16F;}"
+                                        Style="{ThemeResource TransparentButtonStyle}"
                                         ToolTipService.ToolTip="Copy to Clipboard">
                                         <Button.CommandParameter>
                                             <x:Boolean>True</x:Boolean>
@@ -97,13 +100,30 @@
                                 Height="100"
                                 AcceptsReturn="True"
                                 PlaceholderText="Enter text"
-                                TextChanged="OnSourceTextBoxTextChanged" />
+                                TextChanged="OnSourceTextBoxTextChanged"
+                                TextWrapping="Wrap" />
                         </StackPanel>
+
+                        <Button
+                            x:Name="SwitchLanguagesButton"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Command="{x:Bind ViewModel.SwitchLanguagesCommand}"
+                            Content="{ui:FontIcon FontSize=20,
+                                                  Glyph=&#xE8AB;}"
+                            Style="{ThemeResource TransparentButtonStyle}"
+                            ToolTipService.ToolTip="Switch Languages">
+                            <Button.CommandParameter>
+                                <x:Boolean>True</x:Boolean>
+                            </Button.CommandParameter>
+                        </Button>
 
                         <StackPanel
                             x:Name="TranslationField"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="2"
+                            Grid.Row="2"
+                            Grid.ColumnSpan="3"
                             Spacing="8">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -119,6 +139,7 @@
                                         Command="{x:Bind CopyCommand}"
                                         Content="{ui:FontIcon FontSize=16,
                                                               Glyph=&#xE16F;}"
+                                        Style="{ThemeResource TransparentButtonStyle}"
                                         ToolTipService.ToolTip="Copy to Clipboard">
                                         <Button.CommandParameter>
                                             <x:Boolean>False</x:Boolean>
@@ -138,7 +159,8 @@
                                 MinHeight="100"
                                 AcceptsReturn="True"
                                 IsReadOnly="True"
-                                Text="{x:Bind ViewModel.TranslatedText, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.TranslatedText, Mode=OneWay}"
+                                TextWrapping="Wrap" />
                         </StackPanel>
                     </Grid>
 
@@ -147,14 +169,28 @@
                         Margin="0,16,0,0"
                         HorizontalAlignment="Right"
                         Orientation="Horizontal"
-                        Spacing="16">
+                        Spacing="8">
+                        <StackPanel.Transitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </StackPanel.Transitions>
+
                         <muxc:ProgressRing
                             Width="20"
                             Height="20"
                             IsActive="{x:Bind ViewModel.TranslateCommand.IsRunning, Mode=OneWay}" />
 
+                        <Button MinWidth="128" Command="{x:Bind ViewModel.SaveToHistoryCommand}">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE74E;" />
+                                <TextBlock Text="Save to History" />
+                            </StackPanel>
+                        </Button>
+
                         <Button
-                            Command="{x:Bind ViewModel.TranslateCommand, Mode=OneWay}"
+                            MinWidth="128"
+                            Command="{x:Bind ViewModel.TranslateCommand}"
                             Content="Translate"
                             Style="{ThemeResource AccentButtonStyle}">
                             <Button.CommandParameter>
@@ -170,6 +206,12 @@
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+
+                        <Grid.ChildrenTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </Grid.ChildrenTransitions>
 
                         <FontIcon Glyph="&#xE81C;" />
 
@@ -264,8 +306,10 @@
                         <Setter Target="SourceField.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="TranslationField.(Grid.ColumnSpan)" Value="1" />
                         <Setter Target="TranslationField.(Grid.Row)" Value="0" />
-                        <Setter Target="TranslationField.(Grid.Column)" Value="1" />
+                        <Setter Target="TranslationField.(Grid.Column)" Value="3" />
                         <Setter Target="TranslationFieldsGrid.RowSpacing" Value="0" />
+                        <Setter Target="SwitchLanguagesButton.(Grid.Row)" Value="0" />
+                        <Setter Target="SwitchLanguagesButton.Margin" Value="0,36,0,0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

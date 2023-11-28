@@ -25,10 +25,12 @@ public sealed partial class HomePageViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedSourceLanguageInfo))]
+    [NotifyCanExecuteChangedFor(nameof(SwitchLanguagesCommand))]
     private int _selectedSourceLangInfoIndex = 0;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedTranslationLangInfo))]
+    [NotifyCanExecuteChangedFor(nameof(SwitchLanguagesCommand))]
     private int _selectedTranslationLangInfoIndex = 1;
 
     private ITranslationService _translationService;
@@ -113,4 +115,46 @@ public sealed partial class HomePageViewModel : ObservableObject
 
         await Ioc.Default.GetRequiredService<IRepositoryService>().AddSavedTranslationAsync(item);
     }
+
+    [RelayCommand(CanExecute = nameof(IsSourceLanguageAuto))]
+    private void SwitchLanguages(bool switchFields = false)
+    {
+        var previousSourceLangInfo = SelectedSourceLanguageInfo;
+        var previousTranslationLangInfo = SelectedTranslationLangInfo;
+
+        SelectedTranslationLangInfo = previousSourceLangInfo;
+        SelectedSourceLanguageInfo = previousTranslationLangInfo;
+
+        if (switchFields)
+        {
+            var previousTranslatedText = TranslatedText;
+
+            SourceText = previousTranslatedText;
+            TranslatedText = string.Empty;
+
+            TranslateCommand.Execute(false);
+        }
+    }
+
+
+    [RelayCommand]
+    private Task SaveToHistoryAsync()
+    {
+        var item = new TranslationHistory()
+        {
+            SourceText = SourceText,
+            TranslatedText = TranslatedText,
+            SourceLanguage = SelectedSourceLanguageInfo.LanguageCode,
+            TranslationLanguage = SelectedTranslationLangInfo.LanguageCode,
+            Date = DateTime.UtcNow
+        };
+
+        if (TranslationHistory.Count < 5)
+            TranslationHistory.Add(item);
+
+        return Ioc.Default.GetRequiredService<IRepositoryService>().AddSavedTranslationAsync(item);
+    }
+
+    private bool IsSourceLanguageAuto()
+        => SelectedSourceLanguageInfo.LanguageCode != "auto";
 }

@@ -34,8 +34,15 @@ public sealed partial class HomePage : Page
         };
 
         ViewModel.PropertyChanging += OnViewModelPropertyChanging;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
         ViewModel.GetTranslationHistoryCommand?.Execute(null);
+    }
+
+    private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel.SourceText))
+            SourceTextBox.Text = ViewModel.SourceText;
     }
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
@@ -61,6 +68,7 @@ public sealed partial class HomePage : Page
         _timer.Tick -= OnTimerTick;
 
         ViewModel.PropertyChanging -= OnViewModelPropertyChanging;
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
 
         if (settingsService.IsHistoryEnabled)
             ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
@@ -87,12 +95,9 @@ public partial class HomePage
             if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem
                 && ViewModel.SelectedSourceLanguageInfo.LanguageCode != "auto")
             {
-                var previousSourceLangInfo = ViewModel.SelectedSourceLanguageInfo;
-                var previousTranslationLangInfo = ViewModel.SelectedTranslationLangInfo;
-
-                ViewModel.SelectedTranslationLangInfo = previousSourceLangInfo;
-                ViewModel.SelectedSourceLanguageInfo = previousTranslationLangInfo;
-            } else if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem)
+                ViewModel.SwitchLanguagesCommand?.Execute(false);
+            }
+            else if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem)
             {
                 ViewModel.SelectedTranslationLangInfoIndex = ViewModel.SelectedSourceLangInfoIndex + 2;
             }
@@ -101,11 +106,7 @@ public partial class HomePage
             if (TranslationComboBox.SelectedItem == SourceComboBox.SelectedItem
                 && ViewModel.SelectedSourceLanguageInfo.LanguageCode != "auto")
             {
-                var previousSourceLangInfo = ViewModel.SelectedSourceLanguageInfo;
-                var previousTranslationLangInfo = ViewModel.SelectedTranslationLangInfo;
-
-                ViewModel.SelectedTranslationLangInfo = previousSourceLangInfo;
-                ViewModel.SelectedSourceLanguageInfo = previousTranslationLangInfo;
+                ViewModel.SwitchLanguagesCommand?.Execute(false);
             }
         }
 
