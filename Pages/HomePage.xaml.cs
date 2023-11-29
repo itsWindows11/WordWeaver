@@ -73,6 +73,18 @@ public sealed partial class HomePage : Page
         if (settingsService.IsHistoryEnabled)
             ViewModel.TranslationHistory.CollectionChanged -= OnTranslationHistoryCollectionChanged;
     }
+
+    private void OnSourceComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (settingsService.IsLanguageSavingEnabled)
+            settingsService.SelectedSourceLanguageCode = ViewModel.SelectedSourceLanguageInfo.LanguageCode;
+    }
+
+    private void OnTranslationComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (settingsService.IsLanguageSavingEnabled)
+            settingsService.SelectedTranslationLanguageCode = ViewModel.SelectedTranslationLangInfo.LanguageCode;
+    }
 }
 
 // Events

@@ -53,7 +53,7 @@
                     Description="The translation service to use for the app. Changes will take effect after you restart the app."
                     Header="Translation service"
                     HeaderIcon="{ui:FontIcon Glyph=&#xE774;}">
-                    <ComboBox ItemsSource="{ui:EnumValues Type=enums:SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
+                    <ComboBox SelectionChanged="OnTranslationServiceComboBoxSelectionChanged" ItemsSource="{ui:EnumValues Type=enums:SupportedTranslationServices}" SelectedItem="{x:Bind _settingsService.SelectedService, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="enums:SupportedTranslationServices">
                                 <TextBlock Text="{x:Bind Converter={StaticResource ObjectToStringConverter}}" />
@@ -83,6 +83,13 @@
                     </StackPanel>
                 </settings:SettingsCard>
 
+                <settings:SettingsCard
+                    Description="Save the currently selected language for use next time you open the app. Note that the selected language will be reset after selecting a different translation service."
+                    Header="Save currently selected language"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xF2B7;}">
+                    <ToggleSwitch IsOn="{x:Bind _settingsService.IsLanguageSavingEnabled, Mode=TwoWay}" />
+                </settings:SettingsCard>
+
                 <TextBlock
                     Margin="0,16,0,8"
                     FontSize="16"
@@ -90,7 +97,7 @@
                     Text="About" />
 
                 <settings:SettingsExpander Header="WordWeaver" HeaderIcon="{ui:BitmapIcon ShowAsMonochrome=False, Source=ms-appx:///Assets/AppIcon.png}">
-                    <TextBlock>
+                    <TextBlock IsTextSelectionEnabled="True">
                         Version
                         <Run Text="{x:Bind _settingsService.AppVersion}" />
                     </TextBlock>

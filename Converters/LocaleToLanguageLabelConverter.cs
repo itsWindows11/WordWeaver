@@ -13,7 +13,7 @@ namespace WordWeaver.Converters
             if (!string.IsNullOrEmpty(str) && str != "auto")
                 return new Language((string)value).DisplayName;
             else if (str == "auto")
-                return "Auto";
+                return "Detect Language";
 
             throw new ArgumentNullException(nameof(value));
         }

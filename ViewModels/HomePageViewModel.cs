@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using WordWeaver.Models;
 using WordWeaver.Services;
@@ -54,6 +55,15 @@ public sealed partial class HomePageViewModel : ObservableObject
     {
         _translationService = service;
         _settingsService = settingsService;
+
+        if (_settingsService.IsLanguageSavingEnabled)
+        {
+            SelectedSourceLanguageInfo = _translationService.SupportedSourceLanguages
+                .FirstOrDefault(x => x.LanguageCode == _settingsService.SelectedSourceLanguageCode);
+
+            SelectedTranslationLangInfo = _translationService.SupportedTranslationLanguages
+                .FirstOrDefault(x => x.LanguageCode == _settingsService.SelectedTranslationLanguageCode);
+        }
     }
 
     [RelayCommand]

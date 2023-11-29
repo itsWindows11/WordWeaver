@@ -31,6 +31,24 @@ public sealed partial class SettingsService : ObservableObject
         get => Get(true);
         set => Set(value);
     }
+
+    public bool IsLanguageSavingEnabled
+    {
+        get => Get(true);
+        set => Set(value);
+    }
+
+    public string SelectedSourceLanguageCode
+    {
+        get => Get("auto");
+        set => Set(value);
+    }
+
+    public string SelectedTranslationLanguageCode
+    {
+        get => Get("en");
+        set => Set(value);
+    }
 }
 
 public partial class SettingsService

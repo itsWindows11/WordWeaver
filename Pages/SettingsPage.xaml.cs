@@ -21,4 +21,14 @@ public sealed partial class SettingsPage : Page
     [RelayCommand]
     private Task ClearHistoryAsync()
         => Ioc.Default.GetRequiredService<IRepositoryService>().ClearHistoryAsync();
+
+    private void OnTranslationServiceComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_settingsService.IsLanguageSavingEnabled)
+        {
+            // Get back values to their defaults
+            _settingsService.SelectedSourceLanguageCode = "auto";
+            _settingsService.SelectedTranslationLanguageCode = "en";
+        }
+    }
 }
