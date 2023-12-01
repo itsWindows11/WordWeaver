@@ -22,7 +22,7 @@ public sealed partial class SettingsService : ObservableObject
 
     public SupportedTranslationServices SelectedService
     {
-        get => (SupportedTranslationServices)Get((int)SupportedTranslationServices.LibreTranslate);
+        get => (SupportedTranslationServices)Get((int)SupportedTranslationServices.GoogleTranslate);
         set => Set((int)value);
     }
 
