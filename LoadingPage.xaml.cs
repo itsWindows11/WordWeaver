@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.AppCenter.Crashes;
 using System;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WordWeaver.Services;
@@ -24,8 +26,13 @@ public sealed partial class LoadingPage : Page
         try
         {
             await service.FetchSupportedLanguagesAsync();
-        } catch
+        } catch (Exception ex)
         {
+            Crashes.TrackError(ex, new Dictionary<string, string>()
+            {
+                { "fromLoading", "true" }
+            });
+
             var contentDialog = new ContentDialog
             {
                 Title = "Error",

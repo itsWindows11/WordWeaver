@@ -25,9 +25,19 @@ public sealed class LibreTranslateService : ITranslationService, IDisposable
 
         using HttpRequestMessage message = new()
         {
-            RequestUri = new("https://libretranslate.org/languages"),
+            RequestUri = new("https://libretranslate.com/languages"),
             Method = HttpMethod.Get
         };
+
+        var apiParams = new LibreTranslationInfo()
+        {
+            Secret = "54FG5D8"
+        };
+
+        var content = new HttpStringContent(JsonSerializer.Serialize(apiParams, JsonSerializationContext.Default.LibreTranslationInfo));
+        content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
+
+        message.Content = content;
 
         using var result = await _httpClient.TrySendRequestAsync(message, HttpCompletionOption.ResponseHeadersRead);
 
@@ -54,7 +64,8 @@ public sealed class LibreTranslateService : ITranslationService, IDisposable
             Query = text,
             Format = "text",
             Source = fromLocale,
-            Target = toLocale
+            Target = toLocale,
+            Secret = "54FG5D8"
         };
 
         using var httpContent = new HttpStringContent(JsonSerializer.Serialize(info), UnicodeEncoding.Utf8);
@@ -63,7 +74,7 @@ public sealed class LibreTranslateService : ITranslationService, IDisposable
         using HttpRequestMessage message = new()
         {
             Content = httpContent,
-            RequestUri = new("https://libretranslate.org/translate"),
+            RequestUri = new("https://libretranslate.com/translate"),
             Method = HttpMethod.Post
         };
 
