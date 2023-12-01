@@ -1,6 +1,6 @@
 # <p align="center">WordWeaver</p>
 
-WordWeaver is a translator app that helps you translate more quickly and efficiently, with an adaptive and beautiful UI.
+<p align="center">WordWeaver is a translator app that helps you translate more quickly and efficiently, with an adaptive and beautiful UI.</p>
 
 ## Current features
 
