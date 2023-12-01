@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WordWeaver.Services;
@@ -38,10 +39,14 @@ public sealed partial class LoadingPage : Page
                 Title = "Error",
                 Content = "An error occurred while connecting to the translation service. Please check your internet connection and try again.",
                 PrimaryButtonText = "Exit",
-                PrimaryButtonCommand = ExitAppCommand
+                PrimaryButtonCommand = ExitAppCommand,
+                SecondaryButtonText = "Retry",
+                SecondaryButtonCommand = RetryCommand
             };
 
             _ = await contentDialog.ShowAsync();
+
+            return;
         }
 
         Frame.Navigate(typeof(MainPage));
@@ -51,5 +56,11 @@ public sealed partial class LoadingPage : Page
     private void ExitApp()
     {
         Application.Current.Exit();
+    }
+
+    [RelayCommand]
+    private void Retry()
+    {
+        OnPageLoaded(null, null);
     }
 }

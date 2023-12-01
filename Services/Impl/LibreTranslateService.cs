@@ -25,19 +25,9 @@ public sealed class LibreTranslateService : ITranslationService, IDisposable
 
         using HttpRequestMessage message = new()
         {
-            RequestUri = new("https://libretranslate.com/languages"),
+            RequestUri = new("https://libretranslate.org/languages"),
             Method = HttpMethod.Get
         };
-
-        var apiParams = new LibreTranslationInfo()
-        {
-            Secret = "54FG5D8"
-        };
-
-        var content = new HttpStringContent(JsonSerializer.Serialize(apiParams, JsonSerializationContext.Default.LibreTranslationInfo));
-        content.Headers.ContentType = new HttpMediaTypeHeaderValue("application/json");
-
-        message.Content = content;
 
         using var result = await _httpClient.TrySendRequestAsync(message, HttpCompletionOption.ResponseHeadersRead);
 
@@ -64,8 +54,7 @@ public sealed class LibreTranslateService : ITranslationService, IDisposable
             Query = text,
             Format = "text",
             Source = fromLocale,
-            Target = toLocale,
-            Secret = "54FG5D8"
+            Target = toLocale
         };
 
         using var httpContent = new HttpStringContent(JsonSerializer.Serialize(info), UnicodeEncoding.Utf8);
@@ -74,11 +63,13 @@ public sealed class LibreTranslateService : ITranslationService, IDisposable
         using HttpRequestMessage message = new()
         {
             Content = httpContent,
-            RequestUri = new("https://libretranslate.com/translate"),
+            RequestUri = new("https://libretranslate.org/translate"),
             Method = HttpMethod.Post
         };
 
         using var result = await _httpClient.TrySendRequestAsync(message, HttpCompletionOption.ResponseHeadersRead);
+
+        var str = await result.ResponseMessage.Content.ReadAsStringAsync();
 
         using var winrtStream = await result.ResponseMessage.Content.ReadAsInputStreamAsync();
 
